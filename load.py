@@ -1,4 +1,4 @@
-#!/home/suzi/anaconda3/bin/python
+#00!/home/suzi/anaconda3/bin/python
 # -*- coding: utf-8 -*-
 
 import numpy as np

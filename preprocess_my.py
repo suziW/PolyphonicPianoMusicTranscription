@@ -11,8 +11,8 @@ import librosa.display
 import math
 
 
-input_dir = 'data/Classical_Piano_piano-midi.de_MIDIRip/mozart/'
-output_dir = 'models/modle1/data/'
+input_dir = '../mozart/'
+output_dir = 'model/'
 
 sr = 22050
 step = 0.5        # times of window_size
@@ -38,10 +38,14 @@ class Preprocess:
         self.__input_num = 0
         self.__get_file()
 
-        self.__x_input = []
         self.__y_input = []
-        self.__wavfile2np()
+        self.__align_list = []
+        self.__x_input = []
         self.__midfile2np()
+        self.__wavfile2np()
+        print(len(self.__x_input), len(self.__y_input))
+
+        self.__save()
     
     def __save(self):
         self.__x_input = np.array(self.__x_input)
@@ -50,30 +54,34 @@ class Preprocess:
         mmx[:] = self.__x_input[:]
         mmy = np.memmap(filename=self.__output_dir+'y_input.dat', mode='w+', shape=self.__y_input.shape)
         mmy[:] = self.__y_input[:]
+        print(mmx.shape, mmy.shape)
         del mmx, mmy
 
 
     def __midfile2np(self):
         for file in self.__midfiles:
             midobj = pretty_midi.PrettyMIDI(file)     # loadfile
-            mid = midobj.get_piano_roll(fs=sr)[midinote] 
-            print('>>>>>>>>>>> mid:', mid.shape)
+            # endtime = midobj.get_end_time()
+            # print(endtime)
+            mid = midobj.get_piano_roll(fs=sr)[midinote]
+            mid[mid > 0] = 1
+            print('>>>>>>>>>>> mid:', file, mid.shape)
             for i in np.arange(0, len(mid)-self.__window_size+1, self.__step):
-                self.__y_input.append(mid[i+int(i+window_size//2)])
-            break
+                self.__y_input.append(mid[i+int(window_size//2)])
+            self.__align_list.append(len(self.__y_input))
+            # break
             
 
     def __wavfile2np(self):
+        alignIndex = 0
         for file in self.__wavfiles:
             wav, _ = librosa.load(file, sr)
-            print('>>>>>>>>>> wav: ', len(wav))
+            print('>>>>>>>>>> wav: ', file, wav.shape)
             for i in np.arange(0, len(wav)-self.__window_size+1, self.__step):
                 self.__x_input.append(wav[i:i+self.__window_size])
-                # plt.figure()
-                # plt.plot(wav[i:i+self.__window_size])
-                # plt.show()
-                break
-            break
+            self.__x_input = self.__x_input[:self.__align_list[alignIndex]]
+            alignIndex += 1
+            # break
             
         
     def __get_file(self):
@@ -89,8 +97,10 @@ class Preprocess:
 
     def get_param(self):
         return {'input_num': self.__input_num, 'window_size': self.__window_size, 
-                'step': self.__step}
+                'step': self.__step, 'frame/ms': self.__framepms, 'x_input': self.__x_input,
+                'y_input': self.__y_input}
 
 if __name__=='__main__':
     pre = Preprocess(input_dir, output_dir)
-    print(pre.get_param())
+    param = pre.get_param()
+     
