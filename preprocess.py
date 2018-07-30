@@ -12,9 +12,8 @@ from skimage import transform
 
 
 input_dir = 'data/Classical_Piano_piano-midi.de_MIDIRip/mozart/*.wav'
-output_dir = 'data/Classical_Piano_piano-midi.de_MIDIRip/models/modle1/data'
-output_name_x = 'x_train.dat'
-output_name_y = 'y_train.dat'
+output_dir_x = 'models/modle1/data/x_train.dat'
+output_dir_y = 'models/modle1/data/y_train.dat'
 
 sr = 22050
 hop_length = 512
@@ -123,9 +122,9 @@ def preprocese():
     x_input = np.concatenate(x_list)
     y_input = np.concatenate(y_list)
     print('x_input shape: {}, y_input shape: {}'.format(x_input.shape, y_input.shape))
-    mmx = np.memmap(filename=os.path.join(output_dir, output_name_x), mode='w+', shape=x_input.shape)
+    mmx = np.memmap(filename=output_dir_x, mode='w+', shape=x_input.shape)
     mmx[:] = x_input[:]
-    mmy = np.memmap(filename=os.path.join(output_dir, output_name_y), mode='w+', shape=y_input.shape)
+    mmy = np.memmap(filename=output_dir_y, mode='w+', shape=y_input.shape)
     mmy[:] = y_input[:]
     del mmx
     del mmy
