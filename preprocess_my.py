@@ -11,7 +11,7 @@ import librosa.display
 import math
 
 
-input_dir = '../mozart/'
+input_dir = 'data/mozart/'
 output_dir = 'model/'
 
 sr = 22050
