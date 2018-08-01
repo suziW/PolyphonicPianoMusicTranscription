@@ -13,7 +13,7 @@ note_range = 88
 n_bins = bin_multiple * note_range
 threshhole = 0.5
 begin = 0
-frames = 320
+frames = 320    # default about 8s
 
 mmy_groundtruth = np.memmap('models/new/0.00043/y_groundtruth.dat', mode='r')
 y_groundtruth = np.reshape(mmy_groundtruth, (-1, note_range))
@@ -50,7 +50,7 @@ class Eval:
         self.__note_range = 88
         assert(prediction.shape == groundtruth.shape)
         self.__shape = groundtruth.shape
-        self.__mspframe = 1000/sr*hop_length
+        self.__mspframe = 1000/sr*hop_length    # defaut is 23ms
         self.__discard = math.floor(discard/self.__mspframe)
         self.__discarded = defaultdict(list)
         self.__onset_tolerance = math.floor(onset_tolerance/self.__mspframe)

@@ -11,7 +11,7 @@ import librosa.display
 import math
 
 
-input_dir = 'data/mozart/'
+input_dir = '../mozart/'
 output_dir = 'model/'
 
 sr = 22050
@@ -48,8 +48,11 @@ class Preprocess:
         self.__save()
     
     def __save(self):
+        indices = np.random.permutation(len(self.__x_input))
         self.__x_input = np.array(self.__x_input)
         self.__y_input = np.array(self.__y_input)
+        self.__x_input = self.__x_input(indices)
+        self.__y_input = self.__y_input(indices)
         mmx = np.memmap(filename=self.__output_dir+'x_input.dat', mode='w+', shape=self.__x_input.shape)
         mmx[:] = self.__x_input[:]
         mmy = np.memmap(filename=self.__output_dir+'y_input.dat', mode='w+', shape=self.__y_input.shape)
