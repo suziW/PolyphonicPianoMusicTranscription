@@ -20,9 +20,6 @@ window_size = 20       # ms
 min_midi = 21
 max_midi = 108
 midinote = 60       # middle C
-bin_multiple = 3
-bins_per_octave = 12 * bin_multiple  # should be a multiple of 12
-n_bins = (max_midi - min_midi + 1) * bin_multiple
 
 class Preprocess:
     def __init__(self, input_dir, output_dir):
@@ -51,8 +48,8 @@ class Preprocess:
         indices = np.random.permutation(len(self.__x_input))
         self.__x_input = np.array(self.__x_input)
         self.__y_input = np.array(self.__y_input)
-        self.__x_input = self.__x_input(indices)
-        self.__y_input = self.__y_input(indices)
+        self.__x_input = self.__x_input[indices]
+        self.__y_input = self.__y_input[indices]
         mmx = np.memmap(filename=self.__output_dir+'x_input.dat', mode='w+', shape=self.__x_input.shape)
         mmx[:] = self.__x_input[:]
         mmy = np.memmap(filename=self.__output_dir+'y_input.dat', mode='w+', shape=self.__y_input.shape)
